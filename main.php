@@ -1,5 +1,5 @@
 <?php
-    include "class.phpmailer.php"; //for mail functions
+    include "class.phpmailer.php"; //mail functions
  
     if (isset($_GET['reason'])) {
  
@@ -7,8 +7,8 @@
  
         if ($reason == "xss" || $reason == "sql" || $reason == "lfi" || $reason == "rfi") {
  
-        #hack attemp detected
-        #logo etc whatever you want
+        
+        
    
         }
         else
@@ -57,9 +57,9 @@ class Guard implements IGuard
  
  
     /*settings*/
-    public $attack_limit; //If the specified limit is exceeded, the user will be blocked from the system
-    public $auth_password; //authpassword to clear the tables or ban control
-    public $email_from; //Required informations for send email
+    public $attack_limit; 
+    public $auth_password; 
+    public $email_from; 
     public $email_to;
     public $email_password;
     public $email_option;
@@ -72,15 +72,15 @@ class Guard implements IGuard
  
  
  
-    public function __construct() //contructor method
+    public function __construct() 
         {
  
             $this->date=date('d.m.Y - H:i:s');
-            //date time now
+           
             $this->ip=$this->getIp();
-            //get ip adress
+            
             $this->referer_address=$this->get_Referer();
-            //referer adress(if not available will be unknown)
+            
             $this->attack=$this->get_Reason();
             //type of attack(like xss,sql,lfi)
  
@@ -93,7 +93,7 @@ class Guard implements IGuard
  
  
  
-protected function getIp()  //function to get ip address
+protected function getIp()  
 {
     if (!empty($_SERVER['HTTP_CLIENT_IP']))
       {
@@ -110,11 +110,11 @@ protected function getIp()  //function to get ip address
         return $ip;
 }
  
-protected function get_Reason() //function to get reason
+protected function get_Reason() 
 {
     if (isset($_GET['reason']))
     {
-        $this->reason =htmlspecialchars($_GET['reason']);/*redirect to this page from htaccess and get reason*/
+        $this->reason =htmlspecialchars($_GET['reason']);
  
  
         if ($this->reason=="xss")
@@ -156,7 +156,7 @@ protected function get_Reason() //function to get reason
  
 }
  
-protected function get_Referer() //get referer page
+protected function get_Referer() 
 {
     if(isset($_SERVER['HTTP_REFERER']))
     {
@@ -178,34 +178,34 @@ public function set_db_information($db_name,$db_host,$db_username,$db_password)
     $this->db_username=$db_username;
     $this->db_password=$db_password;
     $dsn="mysql:host=$this->db_host;dbname=$this->db_name;charset=utf8";
-    $this->db_connection=new PDO($dsn,$this->db_username,$this->db_password);//database connection (PDO)
+    $this->db_connection=new PDO($dsn,$this->db_username,$this->db_password);
 }
  
  
-public function set_attack_limit($limit) //attack limit(per hour)
+public function set_attack_limit($limit) 
 {
     $this->attack_limit=$limit;
 }
  
-public function set_auth_password($password) //authpassword to clear the tables or ban check
+public function set_auth_password($password) 
 {
     $this->auth_password=$password;
  
 }
  
  
-public function set_time_zone($time_zone) //time zone set(for php)
+public function set_time_zone($time_zone) 
 {
     date_default_timezone_set($time_zone);
 }
  
-public function email_report($select) //email report option if you want to receive email $select must be "send"
+public function email_report($select) 
 {
     $this->email_option=$select;
  
 }
  
-public function set_email_data($from,$to,$password,$smtp,$port) //email settings (for send mail)
+public function set_email_data($from,$to,$password,$smtp,$port)
 {
  
 $this->email_from=$from;
@@ -268,36 +268,36 @@ function send_mail($header,$content)
            
     if($mail->Send())
           {
-            // e-post sent
+           
           }
           else
           {
-              // ops error
+              
             echo $mail->ErrorInfo;
           }
 }
  
  
-public function attack_controll() //main attack control function
+public function attack_controll() 
 {
  
     $check_ip=$this->db_connection->prepare("SELECT id FROM controll where ip_adress=? ");
     $check_ip->execute(array($this->ip));
-    /*check ip adress in database.*/
+    
     $ip_reg_count=$check_ip->rowCount();
-    /*if count = 0 create new registration*/
+   
     if($ip_reg_count == 0){
  
    
         $add_to_db=$this->db_connection->prepare("INSERT INTO controll(ip_adress,first_conn,last_conn,attack_report) VALUES(?,?,?,?) ");
         $add_to_db->execute(array($this->ip,$this->date,$this->date,"Referer Adress:".$this->referer_address." Attack Type:".$this->attack."/"));
  
-        /*Insert needed informations
+        
    
-        */
+        
     }
     else
-    { //if reg count higher than 0
+    {
  
  
  
@@ -305,7 +305,7 @@ public function attack_controll() //main attack control function
     $get_info->execute(array($this->ip));
     $informations=$get_info->fetchAll();
  
-    //recieve information of this ip adress
+    
  
     foreach ($informations as $data)
     {
@@ -313,7 +313,7 @@ public function attack_controll() //main attack control function
         $attack_report=$data['attack_report'];
         if(strpos($attack_report, ","))
         {
-            $det_att_count=count(explode(",",$attack_report)); //detected attack number
+            $det_att_count=count(explode(",",$attack_report)); 
         }
         else
         {
@@ -337,46 +337,46 @@ public function attack_controll() //main attack control function
         {
             $delete_reg=$this->db_connection->prepare("DELETE FROM controll where ip_adress=? ");
             $delete_reg->execute(array($this->ip));
-            /* delete old registration(banned period finished)*/
+            
  
             $old_reg="IP Adress:$this->ip\nFirst Connection:$first_conn - Last Connection:$last_conn\nAttack Report:$attack_report    Detected Attack Number:$det_att_count\n(This informations have been archived because new attack detected from same adress)\n";
  
             $report_old=$this->db_connection->prepare("INSERT INTO reports(report,date) VALUES(?,?)");
             $report_old->execute(array($old_reg,$this->date));
-            /*report to old informations*/
-            #rapor=report
-            #tarih=date
+           
+            
+            
  
             $new_reg=$this->db_connection->prepare("INSERT INTO controll(ip_adress,first_conn,last_conn,attack_report) VALUES(?,?,?,?) ");
             $new_reg->execute(array($this->ip,$this->date,$this->date,"Referer Adress:".$this->referer_address." Attack Type:".$this->attack."/"));
-            /*create new one*/
+           
         }
         else
         {
  
-        if($det_att_count >= $this->attack_limit)/*If the specified limit is exceeded, the user will be banned from the system*/
+        if($det_att_count >= $this->attack_limit)
             {
            
  
            
                 $remove_reg=$this->db_connection->prepare("DELETE FROM controll where ip_adress=?");
                 $remove_reg->execute(array($this->ip));
-                /*remove the control table data*/
+               
  
                 $report_old=$this->db_connection->prepare("INSERT INTO block(ip_adress,ban_date,ban_reason,first_conn,last_conn) VALUES(?,?,?,?,?)");
                 $report_old->execute(array($this->ip,$this->date,$attack_report,$first_det_time,$last_det_time));
-                /*create new report for the old control table data*/
+                
            
            
                 $this->htaccess_blocker($this->ip);
-                /*deny request from banned user*/
+               
             }
             else
             {
                 $new_reg=$attack_report.","."Referer Adress:".$this->referer_address." Attack Type:".$this->attack."/";
                 $update_reg=$this->db_connection->prepare("UPDATE controll SET attack_report = ? ,last_conn = ? where id = ?");
                 $update_reg->execute(array($new_reg,$this->date,$id_number));
-                //update current user attack data
+                
            
  
             }
@@ -391,38 +391,37 @@ public function attack_controll() //main attack control function
  
  
  
-}//function end
+}
  
  
  
-function cleaner()/*clear outdated regs*/
+function cleaner()
 {
  
-    $inf_report ="--Deleted rows texts given below.--\n\n";
+    $inf_report ="--Deleted row texts given below.--\n\n";
     $removed_cntrl_row_count=0;
     $removed_rprt_row_count=0;
  
  
     $controll_tbl=$this->db_connection->query("SELECT id,ip_adress,first_conn,last_conn,attack_report FROM controll");
     $content=$controll_tbl->fetchAll();
-    /*fetch all data from control table*/
+    
  
     foreach($content as $data)
     {
-        /*get datas from control table.do functions for each one*/
+        
         $id_number=$data['id'];
         $ip_adress=$data['ip_adress'];
         $first_conn=$data['first_conn'];
         $last_conn=$data['last_conn'];
         $attack_report=$data['attack_report'];
  
-        /* get needed data*/
-        /* get days,month etc */
+        
  
         $last_det_month=substr($last_conn,3,2);
         $last_det_day=substr($last_conn,0,2);
  
-        /*Delete outdated regs(limit is optinal)*/
+        
  
         if ($last_det_month != $this->current_month || $this->current_day >= $last_det_day+$this->outdate_limit)
         {
@@ -431,7 +430,7 @@ function cleaner()/*clear outdated regs*/
             $remove_reg=$this->db_connection->prepare("DELETE FROM controll where id=? ");
             $remove_reg->execute(array($id_number));
             $removed_cntrl_row_count++;
-            //clear old data(day time is optional)
+            
  
         }
  
@@ -440,15 +439,15 @@ function cleaner()/*clear outdated regs*/
  
         }
  
-        //create report
+        
         }
  
  
  
  
-        $report_tbl=$this->db_connection->query("SELECT id,report,date FROM reports"); #rapor -> report tarih -> date tablo adı reports
+        $report_tbl=$this->db_connection->query("SELECT id,report,date FROM reports"); 
         $get_data=$report_tbl->fetchAll();
-        /*list all data from reports table*/
+       
         foreach($get_data as $report_tbl_data)
         {
  
@@ -461,21 +460,21 @@ function cleaner()/*clear outdated regs*/
             $report_month=substr($report_date,3,2);
             $report_day=substr($report_date,0,2);
  
-            if($report_month != $this->current_month || $this->current_day >= $report_day+$this->outdate_limit)//limit is optional
+            if($report_month != $this->current_month || $this->current_day >= $report_day+$this->outdate_limit)
             {
                 $inf_report .= "<br>@Reports_Tbl : $reported_data<br>Report Date : $report_date<br>";
  
                 $remove_reg=$this->db_connection->prepare("DELETE FROM reports where id =? ");
                 $remove_reg->execute(array($id_number));
                 $removed_rprt_row_count++;
-                //clear outdated reg
+               
             }
             else
             {
  
             }
  
-            //add to report
+            
  
  
         }
@@ -493,7 +492,7 @@ function cleaner()/*clear outdated regs*/
             if($this->email_option=="send")
             {
                 $this->send_mail("Website Reporter",$inf_report);
-                /*send email to website owner(optional)*/
+                
             }
         }
  
@@ -531,7 +530,7 @@ public function block_checker()
  
         if($ban_year != $this->current_year || $ban_month != $this->current_month || $ban_day != $this->current_day || $ban_hour != $this->current_hour)
         {
-            /*check ban period*/
+           
  
                 $ban_rep="IP Adress: $ip_adress First Connection: $first_conn  Last Connection: $last_conn  Ban Reason: $attack_report    Ban period finished.($this->date) ";
            
@@ -539,12 +538,12 @@ public function block_checker()
            
                 $delete_reg=$this->db_connection->prepare("DELETE FROM block where ip_adress=?");
                 $delete_reg->execute(array($ip_adress));
-                /*remove old reg from block table*/
+               
  
            
                 $write_report=$this->db_connection->prepare("INSERT INTO reports(report,date) VALUES(?,?)");
                 $write_report->execute(array($ban_rep,$this->date));
-                /*create new report and insert to reports*/
+               
            
        
            
