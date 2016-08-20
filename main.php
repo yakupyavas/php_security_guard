@@ -485,7 +485,7 @@ function cleaner()
  
         $write_report=$this->db_connection->prepare("INSERT INTO reports(report,date) VALUES(?,?)");
         $write_report->execute(array($statistics,$this->date));
-        /*insert report to database*/
+        
         if (isset($this->email_option))
         {
  
