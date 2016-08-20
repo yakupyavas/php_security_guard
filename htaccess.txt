@@ -1,0 +1,72 @@
+RewriteEngine On
+ 
+#<-- LFI/RFI-->#
+ 
+RewriteCond %{QUERY_STRING} .*(\.log|etc/passwd|etc/shadow|\.conf|proc/self/environ|etc%2fpasswd|proc%2fself%2fenviron|etc%2fshadow).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=lfi [NC]
+ 
+ 
+#RewriteCond %{QUERY_STRING} .*(http:|www\.|\.com|\.net|\.org|\.co|\.edu|\.gov).* [NC]
+#RewriteRule ^(.*)$ guard.php?reason=rfi [NC]
+ 
+#<-- -->
+ 
+ 
+#<-- XSS -->#
+ 
+RewriteCond %{QUERY_STRING} .*("|%22).*(>|%3E|<|%3C).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=xss [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC]
+RewriteRule ^(.*)$ guard.php?reason=xss [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} .*(javascript).*(:|%3A) [NC]
+RewriteRule ^(.*)$ guard.php?reason=xss [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} .*(alert|prompt|confirm).*(\(|%28) [NC]
+RewriteRule ^(.*)$ guard.php?reason=xss [NC]
+ 
+#<-- XSS  -->#
+ 
+ 
+ 
+#<-- SQL İNJECTİON  -->#
+ 
+RewriteCond %{QUERY_STRING} .*(order|group).*(by).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} .*union.*(all|select|insert|drop|update|delete).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} .*hex.*(\(|%28) [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+ 
+RewriteCond %{QUERY_STRING} .*(or|and).*(select|group|from|concat).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+ 
+RewriteCond %{QUERY_STRING} .*("|'|;|%27|%00).*(select|group|from|concat|union|insert|drop|update|delete).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+ 
+RewriteCond %{QUERY_STRING} .*(group_concat).*(\(|%28) [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+RewriteCond %{QUERY_STRING} .*(information_schema).* [NC]
+RewriteRule ^(.*)$ guard.php?reason=sql [NC]
+ 
+ 
+#<-- SQL İNJECTİON -->#
+ 
+order allow,deny
+allow from all
