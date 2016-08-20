@@ -11,8 +11,8 @@ $Guard->set_attack_limit(5); #attack limit per hour
 $Guard->set_outdate_limit(5); #outdate limit
 $Guard->set_time_zone("Europe/Istanbul");
 $Guard->set_email_data("sender@hotmail.com","reciever@gmail.com","password","smtp.live.com",587); #sender->reciever->password->smtp->port
-$Guard->email_report("send"); #write send to recieve email.
-//create new objects then write informations and settings
+$Guard->email_report("send"); 
+
  
 if (isset($_GET['reason']))
 {
@@ -22,8 +22,8 @@ if (isset($_GET['reason']))
    
    
         $Guard->attack_controll();
-        //if user reason = xss,sql,lf or rfi attack controll function will work
-        //redirect to this page
+        
+        
    
    
     }
@@ -40,11 +40,11 @@ if (isset($_GET['authpass']) && isset($_GET['command']))
         {
        
             $Guard->cleaner();
-            //clenaer function
+           
         }
         else
         {
-            #something wrong
+         
         }
     }
  
@@ -55,12 +55,12 @@ if (isset($_GET['authpass']) && isset($_GET['command']))
        
             $Guard->block_checker();
                    
-            //block_checker function
+           
  
         }
         else
         {
-            #something wrong
+            
         }
     }
  
