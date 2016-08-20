@@ -172,7 +172,7 @@ protected function get_Referer()
 public function set_db_information($db_name,$db_host,$db_username,$db_password)
 {
  
-    //database information
+   
     $this->db_name=$db_name;
     $this->db_host=$db_host;
     $this->db_username=$db_username;
@@ -230,7 +230,7 @@ public function htaccess_blocker($ip_adress)
     $write_to_file=fwrite($open_file,$ban);
     $close_file=fclose($open_file);
     echo "CONNECTION BLOCKED";
-    /*deny request from banned user*/
+    
  
 }
 public function htaccess_unblocker($ip_adress)
